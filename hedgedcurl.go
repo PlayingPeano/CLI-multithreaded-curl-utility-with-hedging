@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"strconv"
+	"time"
 )
 
 const (
@@ -55,7 +57,21 @@ func printHelp() {
 	fmt.Println("  hedgedcurl --help")
 }
 
+type Server struct {
+	httpServer *http.Server
+}
+
+func (s *Server) Run(port string, timeout int) error {
+	s.httpServer = &http.Server{
+		Addr:           ":" + port,
+		MaxHeaderBytes: 1 << 20,
+		ReadTimeout:    time.Duration(timeout) * time.Second,
+		WriteTimeout:   time.Duration(timeout) * time.Second,
+	}
+
+	return s.httpServer.ListenAndServe()
+}
+
 func main() {
-	printHelp()
 
 }
